@@ -1,4 +1,5 @@
 import math, random, sys
+import enum
 import pygame, time
 from pygame.locals import*
 from sys import exit
@@ -6,18 +7,18 @@ from pygame import mixer
 
 #initialising python
 pygame.init()
-pygame.mixer.init()
-pygame.mixer.pre_init()
-#mixer.init()
+#pygame.mixer.init()
+pygame.mixer.pre_init(44100,16,2,4096)
+mixer.init()
 
 #define display
 W, H = 1600,900
 HW, HH = (W/2), (H/2)
 AREA = W * H
 
-#Loading Background Music
-MenuMusic = pygame.mixer.Sound("MainMenu.mp3")
-MenuMusic = pygame.mixer.music.set_volume(0.45)
+
+#bsound effects
+buttonsound1 = pygame.mixer.Sound("ButtonSound1.wav") 
 
 
 #initialising display
@@ -67,6 +68,8 @@ right = False
 walkCount = 0
 run = True
 
+
+# FUNCTIONS
 def event_handler():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -74,34 +77,73 @@ def event_handler():
             pygame.quit()
             exit()
 
+# === CLASSES === (CamelCase names)
 
-"""
-def redrawGameWindow():
-    global walkCount
-    DS.blit(mainmenu, (0,0))
-    pygame.display.update()
-    DS.blit(background, (0, 0))
-    lastMoved = "left"
-    if walkCount + 1 >= 27:
-        walkCount = 0
-    if left:
-        DS.blit(walkLeft[walkCount//3],(x,y))
-        walkCount +=1
-        lastMoved = "left"
-    elif right:
-        DS.blit(walkRight[walkCount//3], (x,y))
-        walkCount +=1
-        lastMoved = "right"
-    else: #this is when its moving neither left or right
-        if lastMoved == "left":
-            DS.blit(char2, (x, y))
+class Button():
+
+    def __init__(self, text, x=0, y=0, width=100, height=50, command=None):
+
+        self.text = text
+        self.command = command
+
+        self.image_normal = pygame.Surface((width, height))
+        self.image_normal.fill(green)
+
+        self.image_hovered = pygame.Surface((width, height))
+        buttonsound1.play()
+
+        self.image = self.image_normal
+        self.rect = self.image.get_rect()
+
+        font = pygame.font.Font('freesansbold.ttf', 15)
+
+
+        text_image = font.render(text, True, WHITE)
+        text_rect = text_image.get_rect(center = self.rect.center)
+
+        self.image_normal.blit(text_image, text_rect)
+        self.image_hovered.blit(text_image, text_rect)
+
+        # you can't use it before `blit` 
+        self.rect.topleft = (x, y)
+
+        self.hovered = False
+        #self.clicked = False
+
+    def update(self):
+
+        if self.hovered:
+            self.image = self.image_hovered
         else:
-            DS.blit(char, (x, y))
-"""
+            self.image = self.image_normal
+
+    def draw(self, surface):
+
+        surface.blit(self.image, self.rect)
+
+    def handle_event(self, event):
+
+        if event.type == pygame.MOUSEMOTION:
+            self.hovered = self.rect.collidepoint(event.pos)
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if self.hovered:
+                print('Clicked:', self.text)
+                if self.command:
+                    self.command()
+
+                    
+class GameState( enum.Enum ):
+    Loading = 0
+    Menu = 1
+    Settings = 2
+    Playing = 3
+    GameOver = 4
+    
+#set the game state initially.
+game_state = GameState.Loading
 
 
-
-
+#LOADING
 def text_objects(text, color, size):
     if size == "small":
         textSurface = smallfont.render(text, True, color)
@@ -138,13 +180,68 @@ while (progress/4) < 100:
 
     time.sleep(time_count)
 
+#changing to menu
+game_state = GameState.Menu
+
+
+Menumusic = pygame.mixer.music.load("MainMenu.mp3")
+Menumusic = pygame.mixer.music.play(-1, 0.0)
 
 def main_menu():
     DS.blit(mainmenu, (0, 0))
     pygame.display.update()
-    MenuMusic.play()
+    
+    btn1 = Button('Hello', 200, 50, 100, 50)
+    btn2 = Button('World', 200, 150, 100, 50)
+
+    while run:
+        event_handler()
+        btn1.update()
+        btn2.update()
+
+        # --- draws ---
+
+        btn1.draw(DS)
+        btn2.draw(DS)
+
+    pygame.display.update()
+    
+main_menu()
+
 
     
+
+
+"""
+def redrawGameWindow():
+    global walkCount
+    DS.blit(mainmenu, (0,0))
+    pygame.display.update()
+    
+    DS.blit(background, (0, 0))
+    lastMoved = "left"
+    if walkCount + 1 >= 27:
+        walkCount = 0
+    if left:
+        DS.blit(walkLeft[walkCount//3],(x,y))
+        walkCount +=1
+        lastMoved = "left"
+    elif right:
+        DS.blit(walkRight[walkCount//3], (x,y))
+        walkCount +=1
+        lastMoved = "right"
+    else: #this is when its moving neither left or right
+        if lastMoved == "left":
+            DS.blit(char2, (x, y))
+        else:
+            DS.blit(char, (x, y))
+"""
+
+
+
+
+
+  
 #mainloop
 px, py, speed = HW, HH, 10
 while run:
@@ -178,8 +275,9 @@ while run:
         else:
             isJump = False
             jumpCount = 10
-            
-    main_menu()
+
+           
+
 #    redrawGameWindow()
 
 
