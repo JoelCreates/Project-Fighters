@@ -80,22 +80,32 @@ grey = (180,180,180)
 #Sprite Image Load
 walkLeft = [pygame.image.load('Moving1.png'), pygame.image.load('Moving2.png'), pygame.image.load('Moving3.png'), pygame.image.load('Moving4.png'), pygame.image.load('Moving5.png'), pygame.image.load('Moving6.png'), pygame.image.load('Moving7.png'), pygame.image.load('Moving8.png'), pygame.image.load('Moving9.png')]
 walkRight = []
+
 for i in walkLeft:
     walkRight.append(pygame.transform.flip(i, True, False))
-    
-for x in walkLeft:
-    pygame.transform.smoothscale(x,(372, 493))
+   
+for x in range(len(walkLeft)):
+    walkLeft[x] = pygame.transform.smoothscale(walkLeft[x], (372, 493))
+
+for x in range(len(walkRight)):
+    walkRight[x] = pygame.transform.smoothscale(walkRight[x], (372, 493))
+
 
 char = pygame.image.load('Moving1.png').convert_alpha()
+char = pygame.transform.smoothscale(char, (372, 493))
 char2 = pygame.image.load('Moving1.png').convert_alpha()
+char2 = pygame.transform.smoothscale(char2, (372, 493))
 char2 = pygame.transform.flip(char2, True, False)
 
 
 
 
 
+
+
+
 x = 0
-y = 500
+y = 407
 height = 40
 width = 87
 vel = 5
