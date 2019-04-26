@@ -78,6 +78,7 @@ grey = (180,180,180)
 
 
 #Sprite Image Load
+#18
 walkLeft = [pygame.image.load('Moving1.png'), pygame.image.load('Moving2.png'), pygame.image.load('Moving3.png'), pygame.image.load('Moving4.png'), pygame.image.load('Moving5.png'), pygame.image.load('Moving6.png'), pygame.image.load('Moving7.png'), pygame.image.load('Moving8.png'), pygame.image.load('Moving9.png')]
 walkRight = []
 
@@ -104,6 +105,7 @@ char2 = pygame.transform.flip(char2, True, False)
 
 
 
+
 x = 0
 y = 407
 height = 40
@@ -114,9 +116,67 @@ jumpCount = 10
 left = False
 right = False
 walkCount = 0
+walkCount1 = 0
 run = True
 
 # === CLASSES === (CamelCase names)
+
+class Enemy(object):
+    walkLeft1 = [ pygame.image.load("GB1.png"), pygame.image.load("GB2.png"), pygame.image.load("GB3.png"), pygame.image.load("GB4.png") ]
+    walkRight1= []
+    global vel
+    global walkCount1
+    
+    for i in walkLeft1:
+        walkRight1.append(pygame.transform.flip(i, True, False))
+
+    
+
+    for x in range(len(walkLeft1)):
+        walkLeft1[x] = pygame.transform.smoothscale(walkLeft1[x], (372, 493))
+
+    for x in range(len(walkRight1)):
+        walkRight1[x] = pygame.transform.smoothscale(walkRight1[x], (372, 493))
+
+    def __init__(self, x, y, width, height, end):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.end = end
+        self.path = [self.x, self.end]
+        self.walkCount1 = 0
+        self.vel = 3
+
+    def draw(self, DS):
+        self.move()
+        if self.walkCount1 + 1 <= 33:
+            self.walkCount1 = 0
+
+        if self.vel > 0:
+            DS.blit(self.walkRight1[self.walkCount1 //4], (self.x, self.y))
+            self.walkCount1 += 1
+        else: 
+            DS.blit(self.walkLeft1[self.walkCount1 //4], (self.x, self.y))
+            self.walkCount1 += 1
+
+
+    def move(self):
+        global walkCount1
+        if self.vel > 0:
+            if self.x + self.vel < self.path[1]:
+                self.x += self.vel
+            else:
+                self.vel = self.vel * -1
+                self.walkCount1 = 0
+        else:
+            if self.x - self.vel > self.path[0]:
+                self.x += self.vel
+            else:
+                self.vel = self.vel * -1
+                self.walkCount1 = 0
+
+
 
 class Button():
 
@@ -233,7 +293,7 @@ while (progress/4) < 100:
     loading(progress/4)
     pygame.display.flip()
 
-    time.sleep(time_count)
+    time.sleep(0.01)
 
 
 
@@ -398,6 +458,7 @@ def arcade_mode():
     pygame.display.update()
     run = False
     arcade = True
+    
 
     char1 = Button('Goku Black', 125,  144, 261, 189)
     char2 = Button('Gohan',  500, 152, 165, 178)
@@ -493,14 +554,15 @@ def arcade_mode():
                     if ( fightbutton.mouseIsOver( mouse_position ) ):
                         print("Fight Clicked")
                         mouseclick1.play()
+
                         fight_mode()
-
-
+man = Enemy(1400, 407, 96, 136, 22)
 def redrawGameWindow():
     global walkCount
     pygame.display.update()
     DS.blit(canyon,(0,0))
     lastMoved = "left"
+    man.draw(DS)
     if walkCount + 1 >= 27:
         walkCount = 0
     if left:
@@ -520,7 +582,6 @@ def redrawGameWindow():
 
 
 def fight_mode():
-
     fight = True
     arcade = False
     progress = 0
@@ -550,13 +611,13 @@ def fight_mode():
 
             time.sleep(0.2)
         pygame.display.update()
-        event_handler()
-        
+   
        
         CLOCK.tick(FPS)
         event_handler()
-
+        redrawGameWindow()
         keys = pygame.key.get_pressed()
+        
         if keys[pygame.K_LEFT] and x > vel:
             x -= vel
             left = True
@@ -585,7 +646,7 @@ def fight_mode():
                 jumpCount = 10
 
         pygame.display.update()
-        redrawGameWindow()
+        
 
         
       
