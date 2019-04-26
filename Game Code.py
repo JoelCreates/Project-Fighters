@@ -57,10 +57,6 @@ instructions = pygame.transform.smoothscale(instructions, (W, H))
 images = [bg, instructions,pause, gameover, mainmenu]
 
 
-"""
-for i in images:
-    pygame.transform.smoothscale(i, (W, H))
-"""
 #Image Load
 exit1 = pygame.image.load("exitbutton.png")
 exit1 = pygame.transform.smoothscale(exit1, (165, 72))
@@ -97,13 +93,6 @@ char = pygame.transform.smoothscale(char, (372, 493))
 char2 = pygame.image.load('Moving1.png').convert_alpha()
 char2 = pygame.transform.smoothscale(char2, (372, 493))
 char2 = pygame.transform.flip(char2, True, False)
-
-
-
-
-
-
-
 
 
 x = 0
@@ -237,20 +226,12 @@ class GameState( enum.Enum ):
 
 
 # FUNCTIONS
-def event_handler():
+def EventHandler():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
             pygame.quit()
             exit()
-
-
-
-
-                    
-
-    
-
 
                     
 
@@ -279,7 +260,7 @@ def message_to_screen(msh, color, y_displace = 0, size = "small"):
     DS.blit(textSurf, textRect)
 
 while (progress/4) < 100:
-    event_handler()
+    EventHandler()
     DS.blit(loadingimg, (0,0))
     time_count = (random.randint(1,1))
     increase = random.randint(1,20)
@@ -299,7 +280,7 @@ while (progress/4) < 100:
 
 
 
-def main_menu():
+def MainMenu():
     #Menumusic = pygame.mixer.music.play(-1, 0.0)
     game_state = GameState.Menu
     DS.blit(mainmenu, (0, 0))
@@ -320,7 +301,7 @@ def main_menu():
             pygame.mixer.music.play(-1, 0.0)
 
     while run:
-        event_handler
+        EventHandler()
         # draw the buttons
         #for b in buttons:
             #b.draw( DS ) # --- draws ---
@@ -342,7 +323,7 @@ def main_menu():
                         if b.text == "Arcade Mode":
                             mouseclick1.play()
                             print("Arcade mode has been clicked")
-                            arcade_mode()
+                            ArcadeMode()
                             
                         elif b.text == "Vs Mode":
                             mouseclick1.play()
@@ -352,7 +333,7 @@ def main_menu():
                         elif b.text == "Instructions":
                             mouseclick1.play()
                             print("Instructions mode has been clicked")
-                            instructions_mode()
+                            InstructionsMode()
                             
                         elif b.text == "Options":
                             mouseclick1.play()
@@ -376,7 +357,7 @@ def main_menu():
         
 
 
-def instructions_mode():
+def InstructionsMode():
     DS.blit(instructions, (0,0))
     pygame.display.update()
     run = False
@@ -407,7 +388,7 @@ def instructions_mode():
     
     
     while instructions1:
-        event_handler()
+        EventHandler()
         if (pygame.mixer.get_busy() == True):
             pygame.mixer.music.set_volume(0.2)
         if counter == 0:
@@ -450,16 +431,15 @@ def instructions_mode():
                     print("Instructiona Exited")
                     mouseclick1.play()
                     instructions1 = False
-                    main_menu()
+                    MainMenu()
 
 
-def arcade_mode():
+def ArcadeMode():
     DS.blit(arcadescreen, (0, 0))
     pygame.display.update()
     run = False
     arcade = True
     
-
     char1 = Button('Goku Black', 125,  144, 261, 189)
     char2 = Button('Gohan',  500, 152, 165, 178)
     char3 = Button('Vegeta', 758, 146, 340, 189)
@@ -485,7 +465,7 @@ def arcade_mode():
             pygame.mixer.music.play(-1, 0.0)
 
     while arcade:
-        event_handler() 
+        EventHandler()
         DS.blit(exit1, (134, 800))
         DS.blit(leaderboard1, (557, 786))
         DS.blit(fight, (1320, 785))
@@ -544,18 +524,19 @@ def arcade_mode():
                         print("Arcade Exited")
                         mouseclick1.play()
                         arcade = False
-                        main_menu()
+                        MainMenu()
 
                     if ( leaderboard.mouseIsOver( mouse_position ) ):
                         print("Leaderboard Clicked")
                         mouseclick1.play()
-                        leaderboard_screen()
+                        LeaderBoard()
 
                     if ( fightbutton.mouseIsOver( mouse_position ) ):
                         print("Fight Clicked")
                         mouseclick1.play()
 
-                        fight_mode()
+                        FightMode()
+                        
 man = Enemy(1400, 407, 96, 136, 22)
 def redrawGameWindow():
     global walkCount
@@ -581,7 +562,7 @@ def redrawGameWindow():
 
 
 
-def fight_mode():
+def FightMode():
     fight = True
     arcade = False
     progress = 0
@@ -595,7 +576,7 @@ def fight_mode():
         
     while fight:
         while(progress/4) < 100:
-            event_handler()
+            EventHandler()
             DS.fill(BLACK)
             time_count = (random.randint(1,1))
             increase = random.randint(1,20)
@@ -614,7 +595,6 @@ def fight_mode():
    
        
         CLOCK.tick(FPS)
-        event_handler()
         redrawGameWindow()
         keys = pygame.key.get_pressed()
         
@@ -653,7 +633,7 @@ def fight_mode():
                         
             
                         
-def leaderboard_screen():
+def LeaderBoard():
     DS.blit(leaderboardimg, (0,0))
     pygame.display.update()
     arcade = False
@@ -663,7 +643,7 @@ def leaderboard_screen():
     exitbutton = Button('Exit', 134, 800, 267, 75)
  
     while leader:
-        event_handler()
+        EventHandler()
         DS.blit(text1, (256, 110))
         DS.blit(text2, (986, 110))
         DS.blit(exit1, (134, 800))
@@ -680,7 +660,7 @@ def leaderboard_screen():
                     print("Leaderboard Exited")
                     mouseclick1.play()
                     leader = False
-                    arcade_mode()
+                    ArcadeMode()
                     
 
 
@@ -700,10 +680,8 @@ def leaderboard_screen():
 
 
 
-
-
     
-main_menu()
+MainMenu()
 
 
     
