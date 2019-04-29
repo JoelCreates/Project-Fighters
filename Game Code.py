@@ -57,6 +57,10 @@ instructions = pygame.transform.smoothscale(instructions, (W, H))
 images = [bg, instructions,pause, gameover, mainmenu]
 
 
+"""
+for i in images:
+    pygame.transform.smoothscale(i, (W, H))
+"""
 #Image Load
 exit1 = pygame.image.load("exitbutton.png")
 exit1 = pygame.transform.smoothscale(exit1, (165, 72))
@@ -74,18 +78,22 @@ grey = (180,180,180)
 
 
 #Sprite Image Load
-#18
+    #18
 walkLeft = [pygame.image.load('Moving1.png'), pygame.image.load('Moving2.png'), pygame.image.load('Moving3.png'), pygame.image.load('Moving4.png'), pygame.image.load('Moving5.png'), pygame.image.load('Moving6.png'), pygame.image.load('Moving7.png'), pygame.image.load('Moving8.png'), pygame.image.load('Moving9.png')]
 walkRight = []
+Jump18 = [pygame.image.load('18Jump1.png'), pygame.image.load('18Jump2.png'), pygame.image.load('18Jump3.png'), pygame.image.load('18Jump4.png'), pygame.image.load('18Jump5.png'), pygame.image.load('18Jump6.png'), pygame.image.load('18Jump7.png') ] 
 
 for i in walkLeft:
     walkRight.append(pygame.transform.flip(i, True, False))
    
 for x in range(len(walkLeft)):
-    walkLeft[x] = pygame.transform.smoothscale(walkLeft[x], (372, 493))
+    walkLeft[x] = pygame.transform.smoothscale(walkLeft[x], (311, 412))
 
 for x in range(len(walkRight)):
-    walkRight[x] = pygame.transform.smoothscale(walkRight[x], (372, 493))
+    walkRight[x] = pygame.transform.smoothscale(walkRight[x], (311, 412))
+
+for x in range(len(Jump18)):
+    Jump18[x] = pygame.transform.smoothscale(Jump18[x], (311, 412))    
 
 
 char = pygame.image.load('Moving1.png').convert_alpha()
@@ -94,81 +102,128 @@ char2 = pygame.image.load('Moving1.png').convert_alpha()
 char2 = pygame.transform.smoothscale(char2, (372, 493))
 char2 = pygame.transform.flip(char2, True, False)
 
+   
+
+
 
 x = 0
 y = 407
 height = 40
 width = 87
-vel = 5
+vel = 12
 isJump = False
 jumpCount = 10
 left = False
 right = False
 walkCount = 0
-walkCount1 = 0
+standing = False
+jumpStore = 0
 run = True
 
 # === CLASSES === (CamelCase names)
 
 class Enemy(object):
-    walkLeft1 = [ pygame.image.load("GB1.png"), pygame.image.load("GB2.png"), pygame.image.load("GB3.png"), pygame.image.load("GB4.png") ]
-    walkRight1= []
-    global vel
-    global walkCount1
-    
-    for i in walkLeft1:
-        walkRight1.append(pygame.transform.flip(i, True, False))
+    walkLeftGB = [pygame.image.load('GB1.png'), pygame.image.load('GB2.png'), pygame.image.load('GB3.png'), pygame.image.load('GB4.png'), pygame.image.load('GB5.png'), pygame.image.load('GB6.png'), pygame.image.load('GB7.png'), pygame.image.load('GB8.png'),pygame.image.load('GB9.png') ]
+    walkRightGB = []
 
-    
+    for i in walkLeftGB:
+        walkRightGB.append(pygame.transform.flip(i, True, False))
 
-    for x in range(len(walkLeft1)):
-        walkLeft1[x] = pygame.transform.smoothscale(walkLeft1[x], (372, 493))
+    for x in range(len(walkLeftGB)):
+        walkLeftGB[x] = pygame.transform.smoothscale(walkLeftGB[x], (311, 412))
 
-    for x in range(len(walkRight1)):
-        walkRight1[x] = pygame.transform.smoothscale(walkRight1[x], (372, 493))
-
+    for x in range(len(walkRightGB)):
+        walkRightGB[x] = pygame.transform.smoothscale(walkRightGB[x], (311, 412))
+        
     def __init__(self, x, y, width, height, end):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
-        self.end = end
-        self.path = [self.x, self.end]
-        self.walkCount1 = 0
-        self.vel = 3
+        self.path = [x, end]
+        self.walkCount = 0
+        self.vel = 5
+
+    def move(self):
+        if self.vel > 0:
+            if self.x < self.path[0] + self.vel - 30:
+                self.x += self.vel
+            else:
+                self.vel = self.vel * -1
+                self.x += self.vel
+                self.walkCount = 0
+        else:
+            if self.x > self.path[0] - W + 300 - self.vel:
+                self.x += self.vel
+            else:
+                self.vel = self.vel * -1
+                self.x += self.vel
+                self.walkCount = 0
 
     def draw(self, DS):
         self.move()
-        if self.walkCount1 + 1 <= 33:
-            self.walkCount1 = 0
-
+        if self.walkCount + 1 >= 27:
+            self.walkCount = 0
         if self.vel > 0:
-            DS.blit(self.walkRight1[self.walkCount1 //4], (self.x, self.y))
-            self.walkCount1 += 1
-        else: 
-            DS.blit(self.walkLeft1[self.walkCount1 //4], (self.x, self.y))
-            self.walkCount1 += 1
-
-
-    def move(self):
-        global walkCount1
-        if self.vel > 0:
-            if self.x + self.vel < self.path[1]:
-                self.x += self.vel
-            else:
-                self.vel = self.vel * -1
-                self.walkCount1 = 0
+            DS.blit(self.walkRightGB[self.walkCount//9], (self.x,self.y))
+            self.walkCount += 1
         else:
-            if self.x - self.vel > self.path[0]:
-                self.x += self.vel
-            else:
-                self.vel = self.vel * -1
-                self.walkCount1 = 0
+            DS.blit(self.walkLeftGB[self.walkCount//9], (self.x,self.y))
+            self.walkCount += 1
 
+
+class Android18(object):
+    def __init__(self,x,y,width,height):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.vel = 5
+        self.isJump = False
+        self.left = False
+        self.right = False
+        self.walkCount = 0
+        self.jumpCount = 10
+        self.jumpStore = 0
+        self.standing = True
+
+    def draw(self, DS):
+        if self.walkCount + 1 >= 27:
+            self.walkCount = 0
+            
+        if self.jumpStore + 1 >= 16:
+            self.jumpStore = 0
+
+        if not(self.standing):
+            if self.right:
+                DS.blit(walkRight[self.walkCount//9], (self.x,self.y))
+                self.walkCount += 1
+            elif self.left:
+                DS.blit(walkLeft[self.walkCount//9], (self.x,self.y))
+                self.walkCount +=1
+    
+        else:
+            if self.left:
+                DS.blit(walkLeft[0], (self.x, self.y))
+            else:
+                DS.blit(walkRight[0], (self.x, self.y))
+            
+"""
+        if (self.standing):
+            if self.isJump:
+                DS.blit(Jump18[self.jumpStore//8], (self.x,self.y))
+                self.jumpStore +=1
+
+            elif self.isJump:
+                DS.blit(Jump18[self.jumpStore//8], (self.x,self.y))
+                self.jumpStore +=1
+                #self.walkCount+=1
+"""
+            #self.jumpCount = 10
+       
 
 
 class Button():
-
     def __init__(self, text, x=0, y=0, width=100, height=50, command=None):
 
         self.text = text
@@ -226,12 +281,20 @@ class GameState( enum.Enum ):
 
 
 # FUNCTIONS
-def EventHandler():
+def event_handler():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
             pygame.quit()
             exit()
+
+
+
+
+                    
+
+    
+
 
                     
 
@@ -260,7 +323,7 @@ def message_to_screen(msh, color, y_displace = 0, size = "small"):
     DS.blit(textSurf, textRect)
 
 while (progress/4) < 100:
-    EventHandler()
+    event_handler()
     DS.blit(loadingimg, (0,0))
     time_count = (random.randint(1,1))
     increase = random.randint(1,20)
@@ -280,7 +343,7 @@ while (progress/4) < 100:
 
 
 
-def MainMenu():
+def main_menu():
     #Menumusic = pygame.mixer.music.play(-1, 0.0)
     game_state = GameState.Menu
     DS.blit(mainmenu, (0, 0))
@@ -301,7 +364,7 @@ def MainMenu():
             pygame.mixer.music.play(-1, 0.0)
 
     while run:
-        EventHandler()
+        event_handler
         # draw the buttons
         #for b in buttons:
             #b.draw( DS ) # --- draws ---
@@ -323,7 +386,7 @@ def MainMenu():
                         if b.text == "Arcade Mode":
                             mouseclick1.play()
                             print("Arcade mode has been clicked")
-                            ArcadeMode()
+                            arcade_mode()
                             
                         elif b.text == "Vs Mode":
                             mouseclick1.play()
@@ -333,7 +396,7 @@ def MainMenu():
                         elif b.text == "Instructions":
                             mouseclick1.play()
                             print("Instructions mode has been clicked")
-                            InstructionsMode()
+                            instructions_mode()
                             
                         elif b.text == "Options":
                             mouseclick1.play()
@@ -357,7 +420,7 @@ def MainMenu():
         
 
 
-def InstructionsMode():
+def instructions_mode():
     DS.blit(instructions, (0,0))
     pygame.display.update()
     run = False
@@ -388,7 +451,7 @@ def InstructionsMode():
     
     
     while instructions1:
-        EventHandler()
+        event_handler()
         if (pygame.mixer.get_busy() == True):
             pygame.mixer.music.set_volume(0.2)
         if counter == 0:
@@ -431,15 +494,16 @@ def InstructionsMode():
                     print("Instructiona Exited")
                     mouseclick1.play()
                     instructions1 = False
-                    MainMenu()
+                    main_menu()
 
 
-def ArcadeMode():
+def arcade_mode():
     DS.blit(arcadescreen, (0, 0))
     pygame.display.update()
     run = False
     arcade = True
     
+
     char1 = Button('Goku Black', 125,  144, 261, 189)
     char2 = Button('Gohan',  500, 152, 165, 178)
     char3 = Button('Vegeta', 758, 146, 340, 189)
@@ -465,7 +529,7 @@ def ArcadeMode():
             pygame.mixer.music.play(-1, 0.0)
 
     while arcade:
-        EventHandler()
+        event_handler() 
         DS.blit(exit1, (134, 800))
         DS.blit(leaderboard1, (557, 786))
         DS.blit(fight, (1320, 785))
@@ -524,45 +588,37 @@ def ArcadeMode():
                         print("Arcade Exited")
                         mouseclick1.play()
                         arcade = False
-                        MainMenu()
+                        main_menu()
 
                     if ( leaderboard.mouseIsOver( mouse_position ) ):
                         print("Leaderboard Clicked")
                         mouseclick1.play()
-                        LeaderBoard()
+                        leaderboard_screen()
 
                     if ( fightbutton.mouseIsOver( mouse_position ) ):
                         print("Fight Clicked")
                         mouseclick1.play()
+                        fight_mode()
 
-                        FightMode()
                         
-man = Enemy(1400, 407, 96, 136, 22)
+man = Enemy(1300, 489, 311, 412, 1600)
+Char18 = Android18(0, 489, 311, 412)  
+    
 def redrawGameWindow():
     global walkCount
-    pygame.display.update()
     DS.blit(canyon,(0,0))
     lastMoved = "left"
     man.draw(DS)
-    if walkCount + 1 >= 27:
-        walkCount = 0
-    if left:
-        DS.blit(walkLeft[walkCount//3],(x,y))
-        walkCount +=1
-        lastMoved = "left"
-    elif right:
-        DS.blit(walkRight[walkCount//3], (x,y))
-        walkCount +=1
-        lastMoved = "right"
-    else: #this is when its moving neither left or right
-        if lastMoved == "left":
-            DS.blit(char2, (x, y))
-        else:
-            DS.blit(char, (x, y))
+    Char18.draw(DS)
+    pygame.display.update()
+    pygame.display.flip()
 
 
 
-def FightMode():
+
+
+
+def fight_mode():
     fight = True
     arcade = False
     progress = 0
@@ -573,10 +629,10 @@ def FightMode():
     px, py, speed = HW, HH, 10
     if (pygame.mixer.get_busy() == True):
             pygame.mixer.music.stop()
-        
+
     while fight:
         while(progress/4) < 100:
-            EventHandler()
+            event_handler()
             DS.fill(BLACK)
             time_count = (random.randint(1,1))
             increase = random.randint(1,20)
@@ -591,49 +647,55 @@ def FightMode():
             pygame.display.flip()
 
             time.sleep(0.2)
-        pygame.display.update()
-   
-       
-        CLOCK.tick(FPS)
         redrawGameWindow()
+        CLOCK.tick(FPS)
+        event_handler()
         keys = pygame.key.get_pressed()
         
-        if keys[pygame.K_LEFT] and x > vel:
-            x -= vel
-            left = True
-            right = False
-        elif keys[pygame.K_RIGHT] and x < W - width - vel:
-            x+= vel
-            right = True
-            left = False
+        if keys[pygame.K_a] and Char18.x > Char18.vel:
+            Char18.x -= Char18.vel
+            Char18.left = True
+            Char18.right = False
+            Char18.standing =  False
+        elif keys[pygame.K_d] and Char18.x < W - Char18.width - Char18.vel:
+            Char18.x+= Char18.vel
+            Char18.standing = False
+            Char18.right = True
+            Char18.left = False
         else:
-            right = False
-            left = False
-            walkCount = 0
+            Char18.right = False
+            Char18.left = False
+            Char18.standing = True
+            Char18.walkCount = 0
 
-        if not(isJump):
-            if keys[pygame.K_SPACE]:
-                isJump = True
+        if not(Char18.isJump):
+            if keys[pygame.K_w]:
+                Char18.isJump = True
+                Char18.walkCount = 0
+                Char18.jumpStore += 10
+
         else:
-            if jumpCount >= -10:
-                neg = 1
-                if jumpCount < 0:
-                    neg = -1
-                y-= (jumpCount ** 2) * 0.5 * neg
-                jumpCount -= 1
+            if Char18.jumpCount >= -10:
+                neg = 2
+                if Char18.jumpCount < 0:
+                    neg = -2
+                Char18.y-= (Char18.jumpCount ** 2) * 0.5 * neg
+                Char18.jumpCount -= 1
             else:
-                isJump = False
-                jumpCount = 10
+                Char18.isJump = False
+                Char18.jumpCount = 10
+                Char18.jumpStore += 10
+
+        
 
         pygame.display.update()
-        
-
+    
         
       
-                        
+      
             
                         
-def LeaderBoard():
+def leaderboard_screen():
     DS.blit(leaderboardimg, (0,0))
     pygame.display.update()
     arcade = False
@@ -643,7 +705,7 @@ def LeaderBoard():
     exitbutton = Button('Exit', 134, 800, 267, 75)
  
     while leader:
-        EventHandler()
+        event_handler()
         DS.blit(text1, (256, 110))
         DS.blit(text2, (986, 110))
         DS.blit(exit1, (134, 800))
@@ -660,7 +722,7 @@ def LeaderBoard():
                     print("Leaderboard Exited")
                     mouseclick1.play()
                     leader = False
-                    ArcadeMode()
+                    arcade_mode()
                     
 
 
@@ -680,8 +742,10 @@ def LeaderBoard():
 
 
 
+
+
     
-MainMenu()
+main_menu()
 
 
     
