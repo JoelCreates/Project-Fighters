@@ -82,6 +82,7 @@ grey = (180,180,180)
 walkLeft = [pygame.image.load('Moving1.png'), pygame.image.load('Moving2.png'), pygame.image.load('Moving3.png'), pygame.image.load('Moving4.png'), pygame.image.load('Moving5.png'), pygame.image.load('Moving6.png'), pygame.image.load('Moving7.png'), pygame.image.load('Moving8.png'), pygame.image.load('Moving9.png')]
 walkRight = []
 Jump18 = [pygame.image.load('18Jump1.png'), pygame.image.load('18Jump2.png'), pygame.image.load('18Jump3.png'), pygame.image.load('18Jump4.png'), pygame.image.load('18Jump5.png'), pygame.image.load('18Jump6.png'), pygame.image.load('18Jump7.png') ] 
+Punch18 = [pygame.image.load('18Punch1.png'), pygame.image.load('18Punch2.png'), pygame.image.load('18Punch3.png'), pygame.image.load('18Punch4.png'), pygame.image.load('18Punch5.png')]
 
 for i in walkLeft:
     walkRight.append(pygame.transform.flip(i, True, False))
@@ -93,7 +94,11 @@ for x in range(len(walkRight)):
     walkRight[x] = pygame.transform.smoothscale(walkRight[x], (311, 412))
 
 for x in range(len(Jump18)):
-    Jump18[x] = pygame.transform.smoothscale(Jump18[x], (311, 412))    
+    Jump18[x] = pygame.transform.smoothscale(Jump18[x], (311, 412))
+
+for x in range(len(Punch18)):
+    Punch18[x] = pygame.transform.smoothscale(Punch18[x], (311, 412))    
+
 
 
 char = pygame.image.load('Moving1.png').convert_alpha()
@@ -116,8 +121,10 @@ jumpCount = 10
 left = False
 right = False
 walkCount = 0
+attackCount = 0
 standing = False
 jumpStore = 0
+attack1 = False
 run = True
 
 # === CLASSES === (CamelCase names)
@@ -185,11 +192,17 @@ class Android18(object):
         self.walkCount = 0
         self.jumpCount = 10
         self.jumpStore = 0
+        self.attackCount = 0
         self.standing = True
+        self.attack1 = False
+        
 
     def draw(self, DS):
         if self.walkCount + 1 >= 27:
             self.walkCount = 0
+
+        if self.attackCount + 1 >=10:
+            self.attackCount = 0
             
         if self.jumpStore + 1 >= 16:
             self.jumpStore = 0
@@ -201,12 +214,16 @@ class Android18(object):
             elif self.left:
                 DS.blit(walkLeft[self.walkCount//9], (self.x,self.y))
                 self.walkCount +=1
+            elif self.attack1:
+                DS.blit(Punch18[self.attackCount//5], (self.x,self.y))
     
         else:
             if self.left:
                 DS.blit(walkLeft[0], (self.x, self.y))
             else:
                 DS.blit(walkRight[0], (self.x, self.y))
+
+
             
 """
         if (self.standing):
@@ -685,6 +702,12 @@ def fight_mode():
                 Char18.isJump = False
                 Char18.jumpCount = 10
                 Char18.jumpStore += 10
+        if keys[pygame.K_h]:
+            Char18.attack1 = True
+            Char18.attackCount = 0
+        elif keys[pygame.K_j]:
+            Char18.attack1 = False
+            #Char18.attack2 = True
 
         
 
