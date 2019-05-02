@@ -44,6 +44,7 @@ largefont = pygame.font.SysFont("century gothic",40)
 #background image
 bg = pygame.image.load("Daytime.jpg").convert()
 canyon = pygame.image.load('canyon.png').convert()
+options = pygame.image.load('Options.png').convert()
 arcadescreen = pygame.image.load("Arcade Screen.png").convert()
 loadingimg = pygame.image.load("LoadingScreen.png").convert()
 pause = pygame.image.load("Pause screen.png").convert()
@@ -108,7 +109,9 @@ char2 = pygame.transform.smoothscale(char2, (372, 493))
 char2 = pygame.transform.flip(char2, True, False)
 
    
-
+#other images
+arrow1 = pygame.image.load("arrow.png")
+arrow1 = pygame.transform.smoothscale(arrow1, (120, 68))
 
 
 x = 0
@@ -417,7 +420,8 @@ def main_menu():
                             
                         elif b.text == "Options":
                             mouseclick1.play()
-                            print("options has been clicked")
+                            print("Options has been clicked")
+                            options_mode()
 
                             
                         elif b.text == "Exit game":
@@ -434,7 +438,66 @@ def main_menu():
 
 
         pygame.display.update()
-        
+
+
+def options_mode():
+    DS.blit(options, (0,0))
+    pygame.display.update
+    run = False
+    options1 = True
+    exitbutton = Button('Exit', 134, 800, 267, 75)
+    low_option = Button('Low', 768, 274, 80, 44)
+    mid_option = Button('Mid', 768, 358, 76, 50)
+    high_option = Button('High', 762, 454, 90, 44)
+    cx, cy = 669,746
+ 
+    VolSettings = [low_option, mid_option, high_option]
+    while options1:
+        event_handler()
+        DS.blit(exit1, (134, 800))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                options1 = False
+            if event.type == pygame.MOUSEMOTION:
+                mouse_position = event.pos
+                for b in VolSettings:
+                    b.handleMouseOver( mouse_position )
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_position = event.pos
+                for b in VolSettings:
+                    if ( b.mouseIsOver( mouse_position ) ):
+                        print('Clicked:', b.text)
+       
+                        if b.text == "Low":
+                            mouseclick1.play()
+                            print("Low: Selected")
+                            text1 = largefont.render(b.text + ': Selected', True, WHITE, None)
+                            DS.blit(text1,(cx,cy))
+                            
+                        elif b.text == "Mid":
+                            mouseclick1.play()
+                            print("Mid: Selected")
+                            text1 = largefont.render(b.text + ': Selected', True, WHITE, None)
+                            DS.blit(text1,(cx,cy))
+                         
+                        elif b.text == "High":
+                            mouseclick1.play()
+                            print("High: Selected")
+                            text1 = largefont.render(b.text + ': Selected', True, WHITE, None)
+                            DS.blit(text1,(cx,cy))
+                                       
+
+                    if ( exitbutton.mouseIsOver( mouse_position ) ):
+                        print("Options Exited")
+                        mouseclick1.play()
+                        options1 = False
+                        main_menu()
+
+
+        pygame.display.update()
+
+
 
 
 def instructions_mode():
@@ -445,9 +508,6 @@ def instructions_mode():
     counter = 0
     exitbutton = Button('Exit', 719, 737, 165, 72)
     arrow = Button('Arrow', 1108, 732, 120, 68)
-    
-    arrow1 = pygame.image.load("arrow.png")
-    arrow1 = pygame.transform.smoothscale(arrow1, (120, 68))
     
     box1 = pygame.image.load("Box1.png").convert_alpha()
     box1 = pygame.transform.smoothscale(box1, (1222,706))
@@ -511,6 +571,7 @@ def instructions_mode():
                     print("Instructiona Exited")
                     mouseclick1.play()
                     instructions1 = False
+                    pygame.mixer.music.set_volume(0.8)
                     main_menu()
 
 
