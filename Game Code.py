@@ -65,11 +65,20 @@ for i in images:
 #Image Load
 exit1 = pygame.image.load("exitbutton.png")
 exit1 = pygame.transform.smoothscale(exit1, (165, 72))
+
+arrow1 = pygame.image.load("arrow.png")
+arrow1 = pygame.transform.smoothscale(arrow1, (120, 68))
+
 leaderboard1 = pygame.image.load('leaderboard.png')
 leaderboard1 = pygame.transform.smoothscale(leaderboard1,(529, 114))
+
 fight = pygame.image.load('Fight.png')
 fight = pygame.transform.smoothscale(fight,(256, 117))
+
 loadgif = pygame.image.load('loading.gif').convert_alpha()
+
+mute = pygame.image.load('mute.png').convert_alpha()
+mute = pygame.transform.smoothscale(mute, (96, 98))
 
 #define some colours
 BLACK = (0,0,0,255)
@@ -109,9 +118,7 @@ char2 = pygame.transform.smoothscale(char2, (372, 493))
 char2 = pygame.transform.flip(char2, True, False)
 
    
-#other images
-arrow1 = pygame.image.load("arrow.png")
-arrow1 = pygame.transform.smoothscale(arrow1, (120, 68))
+
 
 
 x = 0
@@ -228,7 +235,7 @@ class Android18(object):
 
 
             
-"""
+
         if (self.standing):
             if self.isJump:
                 DS.blit(Jump18[self.jumpStore//8], (self.x,self.y))
@@ -238,7 +245,7 @@ class Android18(object):
                 DS.blit(Jump18[self.jumpStore//8], (self.x,self.y))
                 self.jumpStore +=1
                 #self.walkCount+=1
-"""
+
             #self.jumpCount = 10
        
 
@@ -445,17 +452,25 @@ def options_mode():
     pygame.display.update
     run = False
     options1 = True
-    exitbutton = Button('Exit', 134, 800, 267, 75)
+
     low_option = Button('Low', 768, 274, 80, 44)
     mid_option = Button('Mid', 768, 358, 76, 50)
     high_option = Button('High', 762, 454, 90, 44)
-    cx, cy = 669,746
- 
-    VolSettings = [low_option, mid_option, high_option]
-    while options1:
-        event_handler()
-        DS.blit(exit1, (134, 800))
+    mutebutton = Button('Mute', 390, 590, 96, 98)
+    VolSettings = [low_option, mid_option, high_option, mutebutton]
 
+    cx, cy = 669,746
+
+    exitbutton = Button('Exit', 134, 800, 267, 75)
+
+
+    limiter = 0
+
+    while options1:
+        event_handler() 
+        DS.blit(exit1, (134, 800))
+        DS.blit(mute, (390,590))
+        pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 options1 = False
@@ -469,34 +484,49 @@ def options_mode():
                     if ( b.mouseIsOver( mouse_position ) ):
                         print('Clicked:', b.text)
        
-                        if b.text == "Low":
+                        if b.text == "Low" and limiter == 0:
                             mouseclick1.play()
                             print("Low: Selected")
                             text1 = largefont.render(b.text + ': Selected', True, WHITE, None)
+                            pygame.mixer.music.set_volume(0.2)
+                            print("Volume: 0.2")
                             DS.blit(text1,(cx,cy))
+                            limiter +=1
                             
-                        elif b.text == "Mid":
+                        elif b.text == "Mid" and limiter == 0:
                             mouseclick1.play()
                             print("Mid: Selected")
                             text1 = largefont.render(b.text + ': Selected', True, WHITE, None)
+                            pygame.mixer.music.set_volume(0.5)
+                            print("Volume: 0.5")
                             DS.blit(text1,(cx,cy))
+                            limiter +=1
                          
-                        elif b.text == "High":
+                        elif b.text == "High" and limiter == 0:
                             mouseclick1.play()
                             print("High: Selected")
                             text1 = largefont.render(b.text + ': Selected', True, WHITE, None)
+                            pygame.mixer.music.set_volume(0.95)
+                            print("Volume: 0.95")
                             DS.blit(text1,(cx,cy))
-                                       
+                            limiter +=1
+
+                        elif b.text == "Mute" and limiter == 0:
+                            mouseclick1.play()
+                            print("Mute: Selected")
+                            text1 = largefont.render(b.text + ': Selected', True, WHITE, None)
+                            pygame.mixer.music.set_volume(0)
+                            print("Volume: 0")
+                            DS.blit(text1,(cx,cy))
+                            limiter +=1
+
+                        pygame.display.update()
 
                     if ( exitbutton.mouseIsOver( mouse_position ) ):
                         print("Options Exited")
                         mouseclick1.play()
                         options1 = False
                         main_menu()
-
-
-        pygame.display.update()
-
 
 
 
