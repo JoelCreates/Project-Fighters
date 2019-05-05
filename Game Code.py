@@ -88,17 +88,17 @@ grey = (180,180,180)
 
 
 #Sprite Image Load
-    #18
+    #Character:18
 walkLeft = [pygame.image.load('Moving1.png'), pygame.image.load('Moving2.png'), pygame.image.load('Moving3.png'), pygame.image.load('Moving4.png'), pygame.image.load('Moving5.png'), pygame.image.load('Moving6.png'), pygame.image.load('Moving7.png'), pygame.image.load('Moving8.png'), pygame.image.load('Moving9.png')]
-walkRight = []
+walkRight = [] # Emtpty list, a for loop will add the images from "walkLeft" in here but they will be horizontally fliped.
 Jump18 = [pygame.image.load('18Jump1.png'), pygame.image.load('18Jump2.png'), pygame.image.load('18Jump3.png'), pygame.image.load('18Jump4.png'), pygame.image.load('18Jump5.png'), pygame.image.load('18Jump6.png'), pygame.image.load('18Jump7.png') ] 
 Punch18 = [pygame.image.load('18Punch1.png'), pygame.image.load('18Punch2.png'), pygame.image.load('18Punch3.png'), pygame.image.load('18Punch4.png'), pygame.image.load('18Punch5.png')]
 
 for i in walkLeft:
-    walkRight.append(pygame.transform.flip(i, True, False))
+    walkRight.append(pygame.transform.flip(i, True, False)) # As mentioned above, this adds the horizontally flipped sprites inside "walkEight"
    
 for x in range(len(walkLeft)):
-    walkLeft[x] = pygame.transform.smoothscale(walkLeft[x], (311, 412))
+    walkLeft[x] = pygame.transform.smoothscale(walkLeft[x], (311, 412)) # This is used to enlarge the sprite dimensions to a given size in its argument.
 
 for x in range(len(walkRight)):
     walkRight[x] = pygame.transform.smoothscale(walkRight[x], (311, 412))
@@ -117,10 +117,8 @@ char2 = pygame.image.load('Moving1.png').convert_alpha()
 char2 = pygame.transform.smoothscale(char2, (372, 493))
 char2 = pygame.transform.flip(char2, True, False)
 
-   
 
-
-
+#Important Sprite Settings, these are needed later on in the code when creating player classes
 x = 0
 y = 407
 height = 40
@@ -392,9 +390,7 @@ def main_menu():
 
     while run:
         event_handler
-        # draw the buttons
-        #for b in buttons:
-            #b.draw( DS ) # --- draws ---
+ 
 
         # Handle events
         for event in pygame.event.get():
@@ -862,25 +858,3 @@ def leaderboard_screen():
 main_menu()
 
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-           
-
-    #redrawGameWindow()
-
-
-    
-    
